@@ -26,6 +26,8 @@ module Split
     attr_accessor :include_rails_helper
     attr_accessor :beta_probability_simulations
     attr_accessor :redis
+    attr_accessor :logging
+    attr_accessor :event
 
     attr_reader :experiments
 
