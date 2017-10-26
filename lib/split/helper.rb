@@ -43,6 +43,7 @@ module Split
     end
 
     def finish_experiment(experiment, options = {:reset => true})
+      logger_info("attempting to finish experiment - #{experiment.inspect}")
       return true if experiment.has_winner?
       should_reset = experiment.resettable? && options[:reset]
       if ab_user[experiment.finished_key] && !should_reset
@@ -154,6 +155,11 @@ module Split
 
     def control_variable(control)
       Hash === control ? control.keys.first.to_s : control.to_s
+    end
+
+    def log_info(msg)
+      Split.configuration.logger.info() if Split.configuration.logger.respond_to?(:info)
+      true
     end
   end
 end
