@@ -24,7 +24,7 @@ module Split
         experiment = ExperimentCatalog.find key_without_version(key)
         if experiment.nil? || experiment.has_winner? || experiment.start_time.nil?
           user.delete key
-          user.delete Experiment.finished_key(key)
+          user.delete experiment.finished_key(key)
         end
       end
     end
@@ -32,7 +32,7 @@ module Split
     def max_experiments_reached?(experiment_key)
       if Split.configuration.allow_multiple_experiments == 'control'
         experiments = active_experiments
-        count_control = experiments.count {|k,v| k == experiment_key || v == 'control'}
+        count_control = experiments.count {|k,v| experiment_key =~ /#{k}(?:\:\d+)?/ || v == 'control'}
         experiments.size > count_control
       else
         !Split.configuration.allow_multiple_experiments &&

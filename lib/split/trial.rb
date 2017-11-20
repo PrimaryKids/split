@@ -125,7 +125,6 @@ module Split
     end
 
     def exclude_user?
-      binding.pry
       @options[:exclude] || @experiment.start_time.nil? || @user.max_experiments_reached?(@experiment.key)
     end
   end

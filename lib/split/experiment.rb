@@ -35,7 +35,7 @@ module Split
       set_alternatives_and_options(options)
     end
 
-    def self.finished_key(key, versogn)
+    def self.finished_key(key, versogn = version)
       "#{key.split(":")[0..-2].join}:#{versogn}:finished"
     end
 

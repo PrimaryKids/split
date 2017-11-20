@@ -229,7 +229,6 @@ describe Split::Helper do
 
         it "should restore previously selected alternative" do
           expect(ab_user.active_experiments.size).to eq 1
-          binding.pry
           expect(ab_test(:test_0, {'control' => 100}, {"test-alt" => 1})).to eq 'test-alt'
           expect(ab_test(:test_0, {'control' => 1}, {"test-alt" => 100})).to eq 'test-alt'
         end
@@ -354,10 +353,9 @@ describe Split::Helper do
       expect(ab_user.keys).to be_empty
     end
 
-    it "should reset the users session when experiment is versioned" do
+    xit "should reset the users session when experiment is versioned - we do not want this to happen" do
       @experiment.increment_version
       @alternative_name = ab_test(@experiment_name, *@alternatives)
-
       expect(ab_user[@experiment.key]).to eq(@alternative_name)
       ab_finished(@experiment_name)
       expect(ab_user.keys).to be_empty
@@ -712,7 +710,7 @@ describe Split::Helper do
       expect(return_alternative_name).to eq(alternative_name)
     end
 
-    it "should reset the session of a user on an older version of the experiment" do
+    xit "should reset the session of a user on an older version of the experiment - not anymore" do
       alternative_name = ab_test('link_color', 'blue', 'red')
       expect(ab_user['link_color']).to eq(alternative_name)
       alternative = Split::Alternative.new(alternative_name, 'link_color')
@@ -729,7 +727,7 @@ describe Split::Helper do
       expect(new_alternative.participant_count).to eq(1)
     end
 
-    it "should cleanup old versions of experiments from the session" do
+    xit "should cleanup old versions of experiments from the session - not anymore" do
       alternative_name = ab_test('link_color', 'blue', 'red')
       expect(ab_user['link_color']).to eq(alternative_name)
       alternative = Split::Alternative.new(alternative_name, 'link_color')
