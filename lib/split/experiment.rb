@@ -35,8 +35,8 @@ module Split
       set_alternatives_and_options(options)
     end
 
-    def self.finished_key(key, versogn = version)
-      "#{key.split(":")[0..-2].join}:#{versogn}:finished"
+    def self.finished_key(key, version_key = version)
+      "#{key.split(":")[0..-2].join}:#{version_key}:finished"
     end
 
     def set_alternatives_and_options(options)
@@ -192,23 +192,23 @@ module Split
     end
 
     def version
-      @version ||= (redis.get("#{name}:version").to_i || 1)
+      @version ||= (redis.get("#{name}:version").to_i || 0)
     end
 
     def increment_version
       @version = redis.incr("#{name}:version")
     end
 
-    def key(versogn = nil)
-      "#{name}:#{versogn || version}"
+    def key(version_key = nil)
+      "#{name}:#{version_key || version}"
     end
 
     def goals_key
       "#{name}:goals"
     end
 
-    def finished_key(versogn = nil)
-      "#{self.class.finished_key(key,versogn || version)}"
+    def finished_key(version_key = nil)
+      "#{self.class.finished_key(key,version_key || version)}"
     end
 
     def metadata_key

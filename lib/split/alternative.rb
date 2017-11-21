@@ -7,7 +7,7 @@ module Split
     attr_accessor :recorded_info
     attr_accessor :version
 
-    def initialize(name, experiment_name, version = 1)
+    def initialize(name, experiment_name, version = 0)
       @experiment_name = experiment_name
       if Hash === name
         @name = name.keys.first
