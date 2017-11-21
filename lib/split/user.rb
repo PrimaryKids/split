@@ -11,7 +11,7 @@ module Split
     end
 
     def [](key)
-      if key_without_version(key) == key
+      if key_without_version(key.to_s) == key.to_s
         #if the key doesn't have version, return one with version
         @user[key_for_experiment_name(key)]
       else
@@ -24,7 +24,7 @@ module Split
         experiment = ExperimentCatalog.find key_without_version(key)
         if experiment.nil? || experiment.has_winner? || experiment.start_time.nil?
           user.delete key
-          user.delete experiment.finished_key(key)
+          user.delete experiment.finished_key(key) if experiment
         end
       end
     end

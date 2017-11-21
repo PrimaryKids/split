@@ -5,8 +5,9 @@ module Split
     attr_accessor :experiment_name
     attr_accessor :weight
     attr_accessor :recorded_info
+    attr_accessor :version
 
-    def initialize(name, experiment_name)
+    def initialize(name, experiment_name, version = 1)
       @experiment_name = experiment_name
       if Hash === name
         @name = name.keys.first
@@ -15,6 +16,9 @@ module Split
         @name = name
         @weight = 1
       end
+
+      @version = version
+
       p_winner = 0.0
     end
 
@@ -182,7 +186,7 @@ module Split
     end
 
     def key
-      "#{experiment_name}:#{name}"
+      "#{experiment_name}:version_#{version}:#{name}"
     end
   end
 end

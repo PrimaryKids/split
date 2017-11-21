@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'pry'
 require 'spec_helper'
 require 'split/alternative'
 
@@ -126,7 +127,7 @@ describe Split::Alternative do
 
   it "should save to redis" do
     alternative.save
-    expect(Split.redis.exists('basket_text:Basket')).to be true
+    expect(Split.redis.exists('basket_text:version_1:Basket')).to be true
   end
 
   it "should increment participation count" do
@@ -278,7 +279,7 @@ describe Split::Alternative do
   describe "extra_info" do
     it "reads saved value of recorded_info in redis" do
       saved_recorded_info = {"key_1" => 1, "key_2" => "2"}
-      Split.redis.hset "#{alternative.experiment_name}:#{alternative.name}", 'recorded_info', saved_recorded_info.to_json
+      Split.redis.hset "#{alternative.experiment_name}:version_1:#{alternative.name}", 'recorded_info', saved_recorded_info.to_json
       extra_info = alternative.extra_info
 
       expect(extra_info).to eql(saved_recorded_info)

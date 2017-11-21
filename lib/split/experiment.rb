@@ -192,7 +192,7 @@ module Split
     end
 
     def version
-      @version ||= (redis.get("#{name}:version").to_i || 0)
+      @version ||= (redis.get("#{name}:version").to_i || 1)
     end
 
     def increment_version
