@@ -40,31 +40,55 @@ module Split
       Split.redis.hset(key, field, prob.to_f)
     end
 
-    def participant_count
-      Split.redis.hget(key, 'participant_count').to_i
+    def participant_count(version_key = version)
+      Split.redis.hget(key(version_key), 'participant_count').to_i
+    end
+
+    def participant_counts
+      (0..version).map do |i|
+        participant_count(i)
+      end
     end
 
     def participant_count=(count)
       Split.redis.hset(key, 'participant_count', count.to_i)
     end
 
-    def completed_count(goal = nil)
+    def completed_count(goal = nil, version_key = version)
       field = set_field(goal)
-      Split.redis.hget(key, field).to_i
+      Split.redis.hget(key(version_key), field).to_i
     end
 
-    def all_completed_count
+    def completed_counts(goal = nil)
+      (0..version).map do |i|
+        completed_count(goal, i)
+      end
+    end
+
+    def all_completed_count(version_key = version)
       if goals.empty?
         completed_count
       else
         goals.inject(completed_count) do |sum, g|
-          sum + completed_count(g)
+          sum + completed_count(g, version_key)
         end
       end
     end
 
-    def unfinished_count
-      participant_count - all_completed_count
+    def all_completed_counts
+      (0..version).map do |i|
+        all_completed_count(i)
+      end
+    end
+
+    def unfinished_count(version_key = version)
+      participant_count(version_key) - all_completed_count(version_key)
+    end
+
+    def unfinished_counts
+      (0..version).map do |i|
+        unfinished_count(i)
+      end
     end
 
     def set_field(goal)
@@ -185,8 +209,8 @@ module Split
       Hash === name && String === name.keys.first && Float(name.values.first) rescue false
     end
 
-    def key
-      "#{experiment_name}:version_#{version}:#{name}"
+    def key(version_key = @version)
+      "#{experiment_name}:version_#{version_key}:#{name}"
     end
   end
 end
