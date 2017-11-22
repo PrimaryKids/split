@@ -46,7 +46,7 @@ module Split
 
     def participant_counts
       (0..version).map do |i|
-        participant_count(i)
+        [i, participant_count(i)]
       end
     end
 
@@ -61,7 +61,7 @@ module Split
 
     def completed_counts(goal = nil)
       (0..version).map do |i|
-        completed_count(goal, i)
+        [i, completed_count(goal, i)]
       end
     end
 
@@ -87,7 +87,7 @@ module Split
 
     def unfinished_counts
       (0..version).map do |i|
-        unfinished_count(i)
+        [i, unfinished_count(i)]
       end
     end
 
@@ -121,9 +121,9 @@ module Split
       experiment.control.name == self.name
     end
 
-    def conversion_rate(goal = nil)
-      return 0 if participant_count.zero?
-      (completed_count(goal).to_f)/participant_count.to_f
+    def conversion_rate(goal = nil, version_key = version)
+      return 0 if participant_count(version_key).zero?
+      (completed_count(goal, version_key).to_f)/participant_count(version_key).to_f
     end
 
     def experiment
@@ -201,6 +201,10 @@ module Split
 
     def delete
       Split.redis.del(key)
+    end
+
+    def keyy
+      key
     end
 
     private

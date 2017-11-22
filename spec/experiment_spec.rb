@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+require 'pry'
 require 'spec_helper'
 require 'time'
 
@@ -268,6 +269,15 @@ describe Split::Experiment do
       experiment.reset
 
       expect(experiment.winner).to be_nil
+    end
+
+    it 'should NOT reset the old versions\' alternative metrics' do
+      experiment.reset
+      green.version = 0
+      expect(green.participant_count).to eq(2)
+      expect(experiment.version).to eq(1)
+      green.version = 1
+      expect(green.participant_count).to eq(0)
     end
 
     it "should increment the version" do

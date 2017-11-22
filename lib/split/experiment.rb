@@ -127,9 +127,20 @@ module Split
     def alternatives=(alts)
       @alternatives = alts.map do |alternative|
         if alternative.kind_of?(Split::Alternative)
+          alternative.version = version
           alternative
         else
-          Split::Alternative.new(alternative, @name)
+          Split::Alternative.new(alternative, @name, version)
+        end
+      end
+    end
+
+    def alternatives(version_key = version)
+      if version_key == version && @alternatives.map(&:version).uniq.first == version
+        @alternatives
+      else
+        @alternatives.map do |alternative|
+          Split::Alternative.new(alternative.name, @name, version_key)
         end
       end
     end
@@ -221,10 +232,10 @@ module Split
 
     def reset
       Split.configuration.on_before_experiment_reset.call(self)
-      alternatives.each(&:reset)
       reset_winner
       Split.configuration.on_experiment_reset.call(self)
       increment_version
+      alternatives.each(&:reset)
     end
 
     def delete
