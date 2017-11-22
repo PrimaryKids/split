@@ -140,7 +140,9 @@ module Split
         @alternatives
       else
         @alternatives.map do |alternative|
-          Split::Alternative.new(alternative.name, @name, version_key)
+          name_weight = {}
+          name_weight[alternative.name] = alternative.weight
+          Split::Alternative.new(name_weight, @name, version_key)
         end
       end
     end
