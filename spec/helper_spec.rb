@@ -858,7 +858,7 @@ describe Split::Helper do
             }
           end
 
-          it "uses first alternative" do
+          it "uses first alternative - I don't understand how this ever worked" do
             expect(ab_test(:link_color)).to eq("blue")
           end
         end

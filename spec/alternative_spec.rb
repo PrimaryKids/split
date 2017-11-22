@@ -127,7 +127,7 @@ describe Split::Alternative do
 
   it "should save to redis" do
     alternative.save
-    expect(Split.redis.exists('basket_text:version_1:Basket')).to be true
+    expect(Split.redis.exists('basket_text:version_0:Basket')).to be true
   end
 
   it "should increment participation count" do
@@ -194,10 +194,10 @@ describe Split::Alternative do
       expect(alternative).to receive(:completed_count).and_return(4)
       expect(alternative.conversion_rate).to eq(0.4)
 
-      expect(alternative).to receive(:completed_count).with(goal1).and_return(5)
+      expect(alternative).to receive(:completed_count).with(goal1, anything).and_return(5)
       expect(alternative.conversion_rate(goal1)).to eq(0.5)
 
-      expect(alternative).to receive(:completed_count).with(goal2).and_return(6)
+      expect(alternative).to receive(:completed_count).with(goal2, anything).and_return(6)
       expect(alternative.conversion_rate(goal2)).to eq(0.6)
     end
   end
@@ -279,7 +279,7 @@ describe Split::Alternative do
   describe "extra_info" do
     it "reads saved value of recorded_info in redis" do
       saved_recorded_info = {"key_1" => 1, "key_2" => "2"}
-      Split.redis.hset "#{alternative.experiment_name}:version_1:#{alternative.name}", 'recorded_info', saved_recorded_info.to_json
+      Split.redis.hset "#{alternative.experiment_name}:version_0:#{alternative.name}", 'recorded_info', saved_recorded_info.to_json
       extra_info = alternative.extra_info
 
       expect(extra_info).to eql(saved_recorded_info)
