@@ -203,10 +203,6 @@ module Split
       Split.redis.del(key)
     end
 
-    def keyy
-      key
-    end
-
     private
 
     def hash_with_correct_values?(name)
