@@ -255,7 +255,9 @@ describe Split::Experiment do
       green.increment_participation
 
       experiment.reset
-
+      expect(green.participant_count).to eq(3)
+      #the new version should have 0 participants and 0 completed_count
+      green.version = 1
       expect(green.participant_count).to eq(0)
       expect(green.completed_count).to eq(0)
     end
@@ -355,6 +357,7 @@ describe Split::Experiment do
       blue.participant_count = 5
       same_experiment = same_but_different_alternative
       expect(same_experiment.alternatives.map(&:name)).to eq(['blue', 'yellow', 'orange'])
+      blue.version = 1
       expect(blue.participant_count).to eq(0)
     end
 
@@ -381,6 +384,7 @@ describe Split::Experiment do
       end
 
       it 'resets all alternatives' do
+        green.version = 1
         expect(green.participant_count).to eq(0)
         expect(green.completed_count).to eq(0)
       end
@@ -468,7 +472,7 @@ describe Split::Experiment do
       expect(experiment.alternatives[0].p_winner).to be_within(0.04).of(0.50)
     end
 
-    it "should calculate the probability of being the winning alternative separately for each goal" do
+    it "should calculate the probability of being the winning alternative separately for each goal - this test is kinda flaky" do
       experiment = Split::ExperimentCatalog.find_or_create({'link_color3' => ["purchase", "refund"]}, 'blue', 'red', 'green')
       goal1 = experiment.goals[0]
       goal2 = experiment.goals[1]

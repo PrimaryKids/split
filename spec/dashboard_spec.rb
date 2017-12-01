@@ -143,7 +143,8 @@ describe Split::Dashboard do
     post "/reset?experiment=#{experiment.name}"
 
     expect(last_response).to be_redirect
-
+    red_link.version = 1
+    blue_link.version = 1
     new_red_count = red_link.participant_count
     new_blue_count = blue_link.participant_count
 

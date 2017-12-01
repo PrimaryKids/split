@@ -758,7 +758,7 @@ describe Split::Helper do
 
   context 'when redis is not available' do
     before(:each) do
-      expect(Split).to receive(:redis).at_most(5).times.and_raise(Errno::ECONNREFUSED.new)
+      expect(Split).to receive(:redis).at_most(10).times.and_raise(Errno::ECONNREFUSED.new)
     end
 
     context 'and db_failover config option is turned off' do

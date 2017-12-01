@@ -82,8 +82,8 @@
         <td><%= alternative.unfinished_counts.map{|version, val| "<span style='font-style: italic;'>v#{version}</span>&nbsp;#{val}"}.join("<br/>") %></td>
         <td><%= alternative.completed_counts(goal).map{|version, val| "<span style='font-style: italic;'>v#{version}</span>&nbsp;#{val}"}.join("<br/>") %></td>
         <td>
-          <% (0..experiment.version).each do |v| -%>
-            <span style='font-style: italic;'>v<%= v -%></span>&nbsp;
+          <% (0..experiment.version).each do |v| %>
+            <span style='font-style: italic;'>v<%= v %></span>&nbsp;
             <%= number_to_percentage(alternative.conversion_rate(goal, v)) %>%
             <% if experiment.control.conversion_rate(goal, v) > 0 && !alternative.control? %>
               <% if alternative.conversion_rate(goal, v) > experiment.control.conversion_rate(goal, v) %>
