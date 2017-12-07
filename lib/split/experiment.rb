@@ -8,6 +8,7 @@ module Split
     attr_accessor :alternatives
     attr_accessor :alternative_probabilities
     attr_accessor :metadata
+    attr_accessor :version
 
     DEFAULT_OPTIONS = {
       :resettable => true
@@ -150,6 +151,7 @@ module Split
     def winner
       experiment_winner = redis.hget(:experiment_winner, name)
       if experiment_winner
+        #may need version here
         Split::Alternative.new(experiment_winner, name)
       else
         nil
@@ -438,6 +440,15 @@ module Split
         redis.lrange(@name, 0, -1)
       end
     end
+
+    def self.version_for_experiment_key(experiment_key)
+      experiment_key ? experiment_key.split(":").last : "0"
+    end
+
+    def self.key_without_version_for_experiment_key(experiment_key)
+      experiment_key ? experiment_key.split(":").first : "0"
+    end
+
 
     private
 

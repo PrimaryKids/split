@@ -9,19 +9,22 @@ module Split
       self.experiment   = attrs.delete(:experiment)
       self.alternative  = attrs.delete(:alternative)
       self.metadata  = attrs.delete(:metadata)
+      self.version = attrs.delete(:version)
 
       @user             = attrs.delete(:user)
       @options          = attrs
 
-      if @user
-        key_for_experiment = @user.keys.find { |k| k.match(Regexp.new("^#{experiment.name}"))}
-        if key_for_experiment
-          self.version = key_for_experiment.split(":").last
+      if self.version.nil?
+        if @user
+          key_for_experiment = @user.keys.find { |k| k.match(Regexp.new("^#{experiment.name}"))}
+          if key_for_experiment
+            self.version = key_for_experiment.split(":").last
+          else
+            self.version = 0
+          end
         else
           self.version = 0
         end
-      else
-        self.version = 0
       end
 
       @alternative_choosen = false
@@ -64,7 +67,6 @@ module Split
       @user.cleanup_old_experiments!
       # Only run the process once
       return alternative if @alternative_choosen
-
       if override_is_alternative?
         self.alternative = @options[:override]
         if should_store_alternative? && !@user[@experiment.key]

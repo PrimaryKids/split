@@ -698,14 +698,15 @@ describe Split::Helper do
       experiment.reset
       expect(experiment.version).to eq(1)
       alternative_name = ab_test('link_color', 'blue', 'red')
-      expect(ab_user['link_color:1']).to eq(alternative_name)
+      #remember we are keeping users in their old versions
+      expect(ab_user['link_color:0']).to eq(alternative_name)
     end
 
     it "should load the experiment even if the version is not 0" do
       experiment.reset
       expect(experiment.version).to eq(1)
       alternative_name = ab_test('link_color', 'blue', 'red')
-      expect(ab_user['link_color:1']).to eq(alternative_name)
+      expect(ab_user['link_color:0']).to eq(alternative_name)
       return_alternative_name = ab_test('link_color', 'blue', 'red')
       expect(return_alternative_name).to eq(alternative_name)
     end
@@ -751,7 +752,7 @@ describe Split::Helper do
       expect(experiment.version).to eq(1)
 
       ab_finished('link_color')
-      alternative = Split::Alternative.new(alternative_name, 'link_color')
+      alternative = Split::Alternative.new(alternative_name, 'link_color', 1)
       expect(alternative.completed_count).to eq(0)
     end
   end

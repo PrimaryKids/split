@@ -9,15 +9,16 @@ module Split
       begin
         experiment = ExperimentCatalog.find_or_initialize(metric_descriptor, control, *alternatives)
         alternative = if Split.configuration.enabled
-          experiment.save
-          trial = Trial.new(:user => ab_user, :experiment => experiment,
-              :override => override_alternative(experiment.name), :exclude => exclude_visitor?,
-              :disabled => split_generically_disabled?)
-          alt = trial.choose!(self)
-          alt ? alt.name : nil
-        else
-          control_variable(experiment.control)
-        end
+                        experiment.version = Split::Experiment.version_for_experiment_key(ab_user.key_for_experiment(experiment)).to_i
+                        experiment.save
+                        trial = Trial.new(:user => ab_user, :experiment => experiment,
+                                          :override => override_alternative(experiment.name), :exclude => exclude_visitor?,
+                                          :disabled => split_generically_disabled?, :version => Split::Experiment.version_for_experiment_key(ab_user.key_for_experiment(experiment)).to_i)
+                        alt = trial.choose!(self)
+                        alt ? alt.name : nil
+                      else
+                        control_variable(experiment.control)
+                      end
       rescue Errno::ECONNREFUSED, Redis::BaseError, SocketError => e
         raise(e) unless Split.configuration.db_failover
         Split.configuration.db_failover_on_db_error.call(e)
@@ -44,13 +45,14 @@ module Split
 
     def finish_experiment(experiment, options = {:reset => true})
       return true if experiment.has_winner?
+      experiment.version = Split::Experiment.version_for_experiment_key(ab_user.key_for_experiment(experiment)).to_i
       should_reset = experiment.resettable? && options[:reset]
       if ab_user[experiment.finished_key(ab_user.version_for_experiment(experiment))] && !should_reset
         return true
       else
-        alternative_name = ab_user[experiment.key]
+        alternative_name = ab_user[Split::Experiment.key_without_version_for_experiment_key(experiment.key)]
         trial = Trial.new(:user => ab_user, :experiment => experiment,
-              :alternative => alternative_name)
+              :alternative => alternative_name, :version => Split::Experiment.version_for_experiment_key(ab_user.key_for_experiment(experiment)))
         trial.complete!(options[:goals], self)
 
         if should_reset

@@ -11,8 +11,9 @@ module Split
     end
 
     def [](key)
-      if key_without_version(key.to_s) == key.to_s
+      if Split::Experiment.key_without_version_for_experiment_key(key.to_s) == key.to_s
         #if the key doesn't have version, return one with version
+        #this might not be needed anymore
         @user[key_for_experiment_name(key)]
       else
         @user[key]
@@ -21,7 +22,7 @@ module Split
 
     def cleanup_old_experiments!
       keys_without_finished(user.keys).each do |key|
-        experiment = ExperimentCatalog.find key_without_version(key)
+        experiment = ExperimentCatalog.find Split::Experiment.key_without_version_for_experiment_key(key)
         if experiment.nil? || experiment.has_winner? || experiment.start_time.nil?
           user.delete key
           user.delete experiment.finished_key(key) if experiment
@@ -47,10 +48,10 @@ module Split
 
     def active_experiments
       experiment_pairs = {}
-      user.keys.each do |key|
-        Metric.possible_experiments(key_without_version(key)).each do |experiment|
+      keys_without_finished(user.keys).each do |key|
+        Metric.possible_experiments(Split::Experiment.key_without_version_for_experiment_key(key)).each do |experiment|
           if !experiment.has_winner?
-            experiment_pairs[key_without_version(key)] = user[key]
+            experiment_pairs[Split::Experiment.key_without_version_for_experiment_key(key)] = user[key]
           end
         end
       end
@@ -82,10 +83,6 @@ module Split
 
     def keys_without_finished(keys)
       keys.reject { |k| k.include?(":finished") }
-    end
-
-    def key_without_version(key)
-      key.split(/\:\d(?!\:)/)[0]
     end
   end
 end
