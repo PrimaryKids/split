@@ -4,4 +4,3 @@ gemspec
 
 gem "appraisal"
 gem "codeclimate-test-reporter"
-gem "pry"
