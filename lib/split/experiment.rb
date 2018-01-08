@@ -37,7 +37,7 @@ module Split
     end
 
     def self.finished_key(key, version_key = version)
-      raise ArgumentError.new("invalid key, does not contain :") unless key.index_of(":")
+      raise ArgumentError.new("invalid key, does not contain :") unless key.index(":")
       "#{key.split(":")[0..-2].join}:#{version_key}:finished"
     end
 
