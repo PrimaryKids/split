@@ -9,16 +9,16 @@ module Split
       begin
         experiment = ExperimentCatalog.find_or_initialize(metric_descriptor, control, *alternatives)
         alternative = if Split.configuration.enabled
-                        experiment.version = Split::Experiment.version_for_experiment_key(ab_user.key_for_experiment(experiment)).to_i
-                        experiment.save
-                        trial = Trial.new(:user => ab_user, :experiment => experiment,
-                                          :override => override_alternative(experiment.name), :exclude => exclude_visitor?,
-                                          :disabled => split_generically_disabled?, :version => Split::Experiment.version_for_experiment_key(ab_user.key_for_experiment(experiment)).to_i)
-                        alt = trial.choose!(self)
-                        alt ? alt.name : nil
-                      else
-                        control_variable(experiment.control)
-                      end
+          experiment.version = Split::Experiment.version_for_experiment_key(ab_user.key_for_experiment(experiment)).to_i
+          experiment.save
+          trial = Trial.new(:user => ab_user, :experiment => experiment,
+                            :override => override_alternative(experiment.name), :exclude => exclude_visitor?,
+                            :disabled => split_generically_disabled?, :version => Split::Experiment.version_for_experiment_key(ab_user.key_for_experiment(experiment)).to_i)
+          alt = trial.choose!(self)
+          alt ? alt.name : nil
+        else
+          control_variable(experiment.control)
+        end
       rescue Errno::ECONNREFUSED, Redis::BaseError, SocketError => e
         raise(e) unless Split.configuration.db_failover
         Split.configuration.db_failover_on_db_error.call(e)

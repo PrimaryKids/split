@@ -37,6 +37,7 @@ module Split
     end
 
     def self.finished_key(key, version_key = version)
+      raise ArgumentError.new("invalid key, does not contain :") unless key.index_of(":")
       "#{key.split(":")[0..-2].join}:#{version_key}:finished"
     end
 
@@ -207,7 +208,7 @@ module Split
     end
 
     def version
-      @version ||= (redis.get("#{name}:version").to_i || 0) rescue @version ||= 0
+      @version ||= (redis.get("#{name}:version").to_i || 0)
     end
 
     def increment_version
