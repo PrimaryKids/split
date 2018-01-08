@@ -44,8 +44,8 @@ module Split
     end
 
     def finish_experiment(experiment, options = {:reset => true})
-      return true if experiment.has_winner?
       experiment.version = Split::Experiment.version_for_experiment_key(ab_user.key_for_experiment(experiment)).to_i
+      return true if experiment.has_winner?      
       should_reset = experiment.resettable? && options[:reset]
       if ab_user[experiment.finished_key(ab_user.version_for_experiment(experiment))] && !should_reset
         return true
