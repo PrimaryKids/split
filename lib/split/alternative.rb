@@ -200,7 +200,8 @@ module Split
     end
 
     def delete
-      Split.redis.del(key)
+      #disabling this method as we don't want to delete alternatives when multiple versions are involved
+      #Split.redis.del(key)
     end
 
     private
