@@ -757,7 +757,8 @@ describe Split::Helper do
     end
   end
 
-  context 'when redis is not available' do
+  #this group of tests is no longer valid as we require redis even in these cases
+  xcontext 'when redis is not available' do
     before(:each) do
       expect(Split).to receive(:redis).at_most(10).times.and_raise(Errno::ECONNREFUSED.new)
     end
