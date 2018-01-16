@@ -4,13 +4,12 @@ rvm:
 
 gemfile:
   - gemfiles/4.2.gemfile
-  - gemfiles/5.0.gemfile
 
 before_install:
   - gem install bundler
 
 script:
-  - RAILS_ENV=test bundle exec rake spec && bundle exec codeclimate-test-reporter
+  - RAILS_ENV=test bundle exec rake spec
 
 cache: bundler
 sudo: false
