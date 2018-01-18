@@ -59,6 +59,8 @@ module Split
     end
 
     def key_for_experiment(experiment)
+      #We grab this from the user keys and not from the experiment object because
+      #it concerns the version of the experiment that the user was bucketed into
       keys.find { |k| k.match(Regexp.new("^#{experiment.name}"))}
     end
 
